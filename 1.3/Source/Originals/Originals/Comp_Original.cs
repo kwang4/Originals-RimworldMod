@@ -71,7 +71,7 @@ namespace Originals
 
             if(pawn.Dead)
             {
-               // Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+                Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
                 if (wasDead == false)
                 {
                     wasDead = true;
