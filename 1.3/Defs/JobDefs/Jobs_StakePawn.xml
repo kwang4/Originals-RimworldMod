@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<JobDef>
+		<defName>StakePawn</defName>
+		<driverClass>Originals.JobDriver_StakePawn</driverClass>
+		<reportString>staking TargetA.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+	
+</Defs>

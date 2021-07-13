@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+<HediffDef>
+    <defName>Original</defName>
+    <label>original</label>
+    <description>A living being with healing powers bestowed upon them by the Original Vampires themselves. They have the ability to resurrect after death, provided .</description>
+    <defaultLabelColor>(164,64,225)</defaultLabelColor>
+    <stages>
+      <li>
+        <label>Mortal</label>
+        <becomeVisible>false</becomeVisible>
+      </li>
+       <li>
+        <label>Lowblood</label>
+        <minSeverity>0.3</minSeverity>
+     </li>
+       <li>
+        <label>Fullblood</label>
+        <minSeverity>1</minSeverity>
+        <painFactor>0.9</painFactor>
+     </li>
+       <li>
+        <label>Highblood</label>
+        <minSeverity>1.5</minSeverity>
+        <painFactor>0.3</painFactor>
+      </li>
+       <li>
+        <label>Original</label>
+        <minSeverity>2.5</minSeverity>
+        <painFactor>0.1</painFactor>
+      </li>
+    </stages>
+  </HediffDef>
+
+    <HediffDef>
+    <defName>OriginalResTimer</defName>
+    <defaultLabelColor>(1, 1, 1)</defaultLabelColor>
+    <description>Resurrection Timer to gauge when an original will come back to life.</description>
+    <label>Resurrecting</label>
+    <stages>
+       <li>
+        <label>Closing skin</label>
+        <minSeverity>0.2</minSeverity>
+     </li>
+            <li>
+        <label>Knitting flesh</label>
+        <minSeverity>.5</minSeverity>
+     </li>
+            <li>
+        <label>Regrowing</label>
+        <minSeverity>1</minSeverity>
+     </li>
+    </stages>
+  </HediffDef>
+	
+</Defs>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Manifest>
+    <identifier>Originals</identifier>
+    <version>1.0.0</version>
+    <dependencies>
+    </dependencies>
+    <!--<incompatibleWith>
+    </incompatibleWith>-->
+    <!--<loadBefore>
+    </loadBefore> -->
+    <loadAfter>
+    </loadAfter>
+    <!--<suggests>
+    </suggests> -->
+</Manifest>
