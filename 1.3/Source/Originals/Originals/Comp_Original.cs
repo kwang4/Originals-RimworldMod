@@ -75,21 +75,32 @@ namespace Originals
             if(pawn.Dead)
             {
                 Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-                Hediff oresHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResTimer, false);
+                Hediff oResHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
                 if (wasDead == false)
                 {
                     wasDead = true;
                     setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime);
                 }
-                if(oHediff.Severity >= 0.3f) //Timer hediff
+                if(oHediff.Severity >= 0.5f) //Timer hediff
                 {
-                    //Add timer hediff
+                    if(oResHediff == null)
+                    {
+                        oResHediff = HediffMaker.MakeHediff(OriginalDefOf.O_ResStatus, pawn, null);
+                        pawn.health.AddHediff(oResHediff);
+                        oResHediff.Severity = 1.0f;
+                    }
+                    
+                    
+                    oResHediff.Severity = (float)(resTimer - Current.Game.tickManager.TicksGame) / (float)OriginalSettings.baseResTime;
                 }
-                Log.Message(Current.Game.tickManager.TicksGame.ToString());
                 if (Current.Game.tickManager.TicksGame >= resTimer)
                 {
+                    if (oHediff.Severity < 0.5f)
+                        oHediff.Severity = 0.5f; //Going from former mortal to lowblood
+
                     ResurrectionUtility.Resurrect(pawn);
                     pawn.health.Notify_Resurrected();
+                    removeResStatusHediff();
                 }
             }
             else
@@ -134,12 +145,12 @@ namespace Originals
         }
 
 
-        public void removeTimerHediff()
+        public void removeResStatusHediff()
         {
             Pawn p = parent as Pawn;
-            Hediff timerHediff = p.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-            if (timerHediff != null)
-                p.health.RemoveHediff(timerHediff);
+            Hediff oResHediff = p.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
+            if (oResHediff != null)
+                p.health.RemoveHediff(oResHediff);
         }
 
         public void setResTimer(int ticks)

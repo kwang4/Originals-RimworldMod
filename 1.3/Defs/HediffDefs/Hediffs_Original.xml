@@ -4,7 +4,7 @@
 <HediffDef>
     <defName>Original</defName>
     <label>original</label>
-    <description>A living being with healing powers bestowed upon them by the Original Vampires themselves. They have the ability to resurrect after death, provided .</description>
+    <description>A living being with healing powers bestowed upon them by the Original Vampires or their descendants. They have the ability to resurrect after death, provided .</description>
     <defaultLabelColor>(164,64,225)</defaultLabelColor>
     <stages>
       <li>
@@ -34,12 +34,15 @@
   </HediffDef>
 
     <HediffDef>
-    <defName>O_ResTimer</defName>
+    <defName>O_ResStatus</defName>
     <defaultLabelColor>(1, 1, 1)</defaultLabelColor>
-    <description>Resurrection Timer to gauge when an original will come back to life.</description>
+    <description>Resurrection Status hediff, approximates what stage of resurrection an Original is on.</description>
     <label>Resurrecting</label>
     <maxSeverity>2.0</maxSeverity>
     <stages>
+      <li>
+        <label>Reanimating</label>
+       </li>
        <li>
         <label>Closing skin</label>
         <minSeverity>0.2</minSeverity>

@@ -25,7 +25,7 @@ namespace Originals
             listingStandard.Label("Default: 0.05 (5%)");
             OriginalSettings.originalChance = listingStandard.Slider(OriginalSettings.originalChance, 0, 1);
 
-            listingStandard.Label("Base Resurrection Time: " + OriginalSettings.baseResTime, -1, "How many ticks it takes to resurrect (60,000 ticks is one day)");
+            listingStandard.Label("Base Resurrection Time: " + OriginalSettings.baseResTime, -1, "How many ticks it takes to resurrect a fullblooded original (60,000 ticks is one day)");
             listingStandard.Label("Default: 70000");
            OriginalSettings.baseResTime = (int)listingStandard.Slider(OriginalSettings.baseResTime, 0, 150000);
             listingStandard.End();
