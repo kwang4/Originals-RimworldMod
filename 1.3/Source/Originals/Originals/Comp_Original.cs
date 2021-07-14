@@ -33,7 +33,7 @@ namespace Originals
             }
             if (checkOriginal)
             {
-                isOriginal = CanBeOriginal() && Rand.Chance(0.05f);
+                isOriginal = CanBeOriginal() && Rand.Chance(OriginalSettings.originalChance);
                 Pawn p = parent as Pawn;
                 if (p.health.hediffSet.HasHediff(OriginalDefOf.Original))
                 {

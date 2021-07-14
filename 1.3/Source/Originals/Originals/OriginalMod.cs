@@ -20,6 +20,11 @@ namespace Originals
         {
             Listing_Standard listingStandard = new Listing_Standard();
             listingStandard.Begin(inRect);
+            listingStandard.CheckboxLabeled("Resurrection sickness", ref OriginalSettings.resSickness, "Should a resurrected pawn have resurrection sickness after coming back");
+            listingStandard.Label("Original Chance: " + OriginalSettings.originalChance);
+            listingStandard.Label("Default: 0.05 (5%)");
+            OriginalSettings.originalChance = listingStandard.Slider(OriginalSettings.originalChance, 0, 1);
+
             listingStandard.Label("Base Resurrection Time: " + OriginalSettings.baseResTime, -1, "How many ticks it takes to resurrect (60,000 ticks is one day)");
             listingStandard.Label("Default: 70000");
            OriginalSettings.baseResTime = (int)listingStandard.Slider(OriginalSettings.baseResTime, 0, 150000);
