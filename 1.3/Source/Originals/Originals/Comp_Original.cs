@@ -74,40 +74,49 @@ namespace Originals
 
             if(pawn.Dead)
             {
-                Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-                Hediff oResHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
-                if (wasDead == false)
-                {
-                    wasDead = true;
-                    setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime);
-                }
-                if(oHediff.Severity >= 0.5f) //Timer hediff
-                {
-                    if(oResHediff == null)
-                    {
-                        oResHediff = HediffMaker.MakeHediff(OriginalDefOf.O_ResStatus, pawn, null);
-                        pawn.health.AddHediff(oResHediff);
-                        oResHediff.Severity = 1.0f;
-                    }
-                    
-                    
-                    oResHediff.Severity = (float)(resTimer - Current.Game.tickManager.TicksGame) / (float)OriginalSettings.baseResTime;
-                }
-                if (Current.Game.tickManager.TicksGame >= resTimer)
-                {
-                    if (oHediff.Severity < 0.5f)
-                        oHediff.Severity = 0.5f; //Going from former mortal to lowblood
-
-                    ResurrectionUtility.Resurrect(pawn);
-                    pawn.health.Notify_Resurrected();
-                    removeResStatusHediff();
-                }
+                RareDeadTick(pawn);
             }
             else
             {
-                wasDead = false;
+                RareLivingTick();
             }
 
+        }
+
+        public void RareDeadTick(Pawn pawn)
+        {
+            Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+            Hediff oResHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
+            if (wasDead == false)
+            {
+                wasDead = true;
+                setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime);
+            }
+            if (oHediff.Severity >= 0.5f) //Timer hediff
+            {
+                if (oResHediff == null)
+                {
+                    oResHediff = HediffMaker.MakeHediff(OriginalDefOf.O_ResStatus, pawn, null);
+                    pawn.health.AddHediff(oResHediff);
+                }
+
+                setResHediffSeverity(oResHediff);
+
+            }
+            if (oResHediff.Severity == 0 || (oResHediff.Severity <= .13 && Rand.Chance(0.4f)))
+            {
+                if (oHediff.Severity < 0.5f)
+                    oHediff.Severity = 0.5f; //Going from former mortal to lowblood
+
+                ResurrectionUtility.Resurrect(pawn);
+                pawn.health.Notify_Resurrected();
+                removeResStatusHediff();
+            }
+        }
+
+        public void RareLivingTick()
+        {
+            wasDead = false;
         }
 
         public int getResurrectionLength()
@@ -151,6 +160,32 @@ namespace Originals
             Hediff oResHediff = p.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
             if (oResHediff != null)
                 p.health.RemoveHediff(oResHediff);
+        }
+
+        public bool hasMissingParts()
+        {
+            return hasMissingParts(1);
+        }
+        public bool hasMissingParts(int breakOnNum)
+        {
+            int counter = 0;
+            foreach (Hediff hediff in ((IEnumerable<Hediff>)(parent as Pawn).health.hediffSet.hediffs.ToList<Hediff>()))
+            {
+                if(hediff.GetType() == typeof(Hediff_MissingPart))
+                {
+                    counter++;
+                }
+                if (counter >= breakOnNum)
+                    return true;
+            }
+            return false;
+        }
+
+        public void setResHediffSeverity(Hediff oResHediff)
+        {
+            float missingPartOffset = hasMissingParts(2) ? (float)OriginalSettings.baseResTime/3 : 0;
+            oResHediff.Severity = Math.Max((float)(resTimer - Current.Game.tickManager.TicksGame + missingPartOffset) / (float)OriginalSettings.baseResTime,0);
+            
         }
 
         public void setResTimer(int ticks)

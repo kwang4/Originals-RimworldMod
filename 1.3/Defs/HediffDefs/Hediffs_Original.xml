@@ -45,19 +45,19 @@
        </li>
        <li>
         <label>Closing skin</label>
-        <minSeverity>0.2</minSeverity>
+        <minSeverity>0.13</minSeverity>
      </li>
             <li>
         <label>Knitting flesh</label>
-        <minSeverity>.5</minSeverity>
+        <minSeverity>.3</minSeverity>
      </li>
             <li>
         <label>Healing wounds</label>
-        <minSeverity>1</minSeverity>
+        <minSeverity>.5</minSeverity>
      </li>
             <li>
         <label>Regrowing</label>
-        <minSeverity>1.5</minSeverity>
+        <minSeverity>1</minSeverity>
      </li>
     </stages>
   </HediffDef>
