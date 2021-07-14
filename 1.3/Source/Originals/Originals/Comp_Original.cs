@@ -33,7 +33,7 @@ namespace Originals
             }
             if (checkOriginal)
             {
-                isOriginal = CanBeOriginal() && Rand.Chance(.05f);
+                isOriginal = CanBeOriginal() && Rand.Chance(0.05f);
                 Pawn p = parent as Pawn;
                 if (p.health.hediffSet.HasHediff(OriginalDefOf.Original))
                 {
@@ -64,20 +64,24 @@ namespace Originals
             if (pawn.health.hediffSet.HasHediff(OriginalDefOf.Original, false)) //Check if hediff magically dissapears (devmode)
                 isOriginal = true;
             else
+            {
                 isOriginal = false;
-
-            if (!isOriginal)
                 return;
+            }
+                
+
+
 
             if(pawn.Dead)
             {
                 Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+                Hediff oresHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResTimer, false);
                 if (wasDead == false)
                 {
                     wasDead = true;
-                    setResTimer(Current.Game.tickManager.TicksGame + 30000);
+                    setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime);
                 }
-                if(!pawn.health.hediffSet.HasHediff(OriginalDefOf.Original,false))
+                if(oHediff.Severity >= 0.3f) //Timer hediff
                 {
                     //Add timer hediff
                 }

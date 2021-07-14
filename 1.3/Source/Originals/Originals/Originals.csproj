@@ -62,8 +62,10 @@
     <Compile Include="CompProperties_Original.cs" />
     <Compile Include="JobDriver_StakePawn.cs" />
     <Compile Include="OriginalDefOf.cs" />
+    <Compile Include="OriginalMod.cs" />
     <Compile Include="OriginalRacePatch.cs" />
     <Compile Include="Comp_Original.cs" />
+    <Compile Include="OriginalSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

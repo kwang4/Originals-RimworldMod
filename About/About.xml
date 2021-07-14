@@ -4,10 +4,8 @@
   <author>Kwang4</author>
   <packageId>Kwang4.Originals</packageId>
   <description>Spinoff of fridgeBaron's Immortals mod, but based off of TVD's Vampire immortality.</description>
-
   <url></url>
   <supportedVersions>
-    <li>1.2</li>
     <li>1.3</li>
   </supportedVersions>
   
@@ -25,7 +23,7 @@
     <v1.3>
       <li>brrainz.harmony</li>
       <li>UnlimitedHugs.HugsLib</li>
-    </v1.2>
+    </v1.3>
   </loadAfterByVersion>        
 
 </ModMetaData>

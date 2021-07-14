@@ -16,5 +16,6 @@ public static class OriginalDefOf
             DefOfHelper.EnsureInitializedInCtor(typeof(OriginalDefOf));
         }
         public static HediffDef Original;
+        public static HediffDef O_ResTimer;
     }
 }
