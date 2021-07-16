@@ -22,11 +22,11 @@ namespace Originals
         }
     }
 
-    [HarmonyPatch(typeof(Corpse),"ShouldVanish", MethodType.Getter)]
+    [HarmonyPatch(typeof(Corpse), "ShouldVanish", MethodType.Getter)]
     public static class Patch_Corpse_ShouldVanish
     {
         [HarmonyPrefix]
-        public static bool Prefix(Corpse __instance, bool __result)
+        public static bool Prefix(Corpse __instance, ref bool __result)
         {
             if (__instance == null || __instance.InnerPawn == null)
             {
@@ -37,7 +37,7 @@ namespace Originals
         }
     }
 
-    [HarmonyPatch(typeof(FloatMenuMakerMap),"AddHumanlikeOrders")]
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "AddHumanlikeOrders")]
     public static class FloatMenuMakerCarryAdder
     {
         [HarmonyPostfix]
@@ -46,10 +46,10 @@ namespace Originals
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
                 return;
             IntVec3 c = IntVec3.FromVector3(clickPos);
-            foreach(Thing t in c.GetThingList(pawn.Map))
+            foreach (Thing t in c.GetThingList(pawn.Map))
             {
                 Pawn target = t as Pawn;
-                if(target != null)
+                if (target != null)
                 {
                     if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
                     {
@@ -67,7 +67,7 @@ namespace Originals
                     opts.Add(menuOption);
                 }
             }
-/*            foreach(LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos,TargetingParameters.ForAttackAny(),true,null))
+            foreach (LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackAny(), true, null))
             {
                 Pawn target = (Pawn)targetInfo.Thing;
                 if (!target.Downed && target.Awake())
@@ -88,7 +88,7 @@ namespace Originals
                 opts.Add(menuOption);
 
 
-            }*/
+            }
         }
     }
 }

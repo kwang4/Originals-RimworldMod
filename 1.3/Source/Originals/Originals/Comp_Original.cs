@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Verse;
 using RimWorld;
+using RimWorld.Planet;
+
 namespace Originals
 {
     public class Comp_Original : ThingComp
@@ -39,13 +41,13 @@ namespace Originals
                 {
                     isOriginal = true;
                 }
-                else if(isOriginal)
+                else if (isOriginal)
                 {
                     addOriginalHediff(0.3f);
                 }
 
                 //Remove possibly unwanted originals
-                if(!CanBeOriginal())
+                if (!CanBeOriginal())
                 {
                     removeOriginalHediff();
                 }
@@ -68,11 +70,11 @@ namespace Originals
                 isOriginal = false;
                 return;
             }
-                
 
 
+            Log.Message("Ticking");
 
-            if(pawn.Dead)
+            if (pawn.Dead)
             {
                 RareDeadTick(pawn);
             }
@@ -85,6 +87,7 @@ namespace Originals
 
         public void RareDeadTick(Pawn pawn)
         {
+
             Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
             Hediff oResHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
             if (wasDead == false)
@@ -108,9 +111,7 @@ namespace Originals
                 if (oHediff.Severity < 0.5f)
                     oHediff.Severity = 0.5f; //Going from former mortal to lowblood
 
-                ResurrectionUtility.Resurrect(pawn);
-                pawn.health.Notify_Resurrected();
-                removeResStatusHediff();
+                ResPawn(pawn);
             }
         }
 
@@ -118,6 +119,50 @@ namespace Originals
         {
             wasDead = false;
         }
+
+        public void ResPawn(Pawn pawn)
+        {
+            int tile = -1;
+            Caravan pawnCaravan = null;
+            tile = pawn?.Corpse?.Tile ?? -1;
+            
+            if (tile != -1)
+            {
+                //Caravan Checks
+                List<Caravan> caravans = new List<Caravan>();
+                Find.World.worldObjects.GetPlayerControlledCaravansAt(tile, caravans);
+                foreach (Caravan c in caravans)
+                {
+                    if (c.AllThings.Contains(pawn.Corpse))
+                    {
+                        pawnCaravan = c;
+
+                        break;
+                    }
+                }
+            }
+            if(!pawn.Corpse.Spawned && pawnCaravan == null)
+            {
+                GenSpawn.Spawn(pawn.Corpse, pawn.PositionHeld, pawn.MapHeld, WipeMode.Vanish);
+            }
+            Thing storage = pawn.Corpse.StoringThing();
+            if (storage != null && pawnCaravan == null)
+            {
+                GenSpawn.Spawn(pawn.Corpse, storage.Position, storage.Map, WipeMode.Vanish);
+
+            }
+            ResurrectionUtility.Resurrect(pawn);
+            pawn.health.Notify_Resurrected();
+            removeResStatusHediff();
+            if (pawnCaravan != null)
+                pawnCaravan.AddPawn(pawn, false);
+            else
+                GenExplosion.DoExplosion(pawn.Position, pawn.Map, 9f, DamageDefOf.Smoke, pawn);
+
+            Messages.Message(pawn.Name + " has resurrected!", MessageTypeDefOf.PositiveEvent, false);
+
+        }
+
 
         public int getResurrectionLength()
         {
@@ -149,7 +194,7 @@ namespace Originals
             Pawn p = parent as Pawn;
             Hediff originalHediff = p.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
             if (originalHediff != null)
-                
+
                 p.health.RemoveHediff(originalHediff);
         }
 
@@ -171,7 +216,7 @@ namespace Originals
             int counter = 0;
             foreach (Hediff hediff in ((IEnumerable<Hediff>)(parent as Pawn).health.hediffSet.hediffs.ToList<Hediff>()))
             {
-                if(hediff.GetType() == typeof(Hediff_MissingPart))
+                if (hediff.GetType() == typeof(Hediff_MissingPart))
                 {
                     counter++;
                 }
@@ -183,9 +228,9 @@ namespace Originals
 
         public void setResHediffSeverity(Hediff oResHediff)
         {
-            float missingPartOffset = hasMissingParts(2) ? (float)OriginalSettings.baseResTime/3 : 0;
-            oResHediff.Severity = Math.Max((float)(resTimer - Current.Game.tickManager.TicksGame + missingPartOffset) / (float)OriginalSettings.baseResTime,0);
-            
+            float missingPartOffset = hasMissingParts(2) ? (float)OriginalSettings.baseResTime / 3 : 0;
+            oResHediff.Severity = Math.Max((float)(resTimer - Current.Game.tickManager.TicksGame + missingPartOffset) / (float)OriginalSettings.baseResTime, 0);
+
         }
 
         public void setResTimer(int ticks)
