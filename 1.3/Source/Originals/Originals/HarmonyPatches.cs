@@ -26,11 +26,10 @@ namespace Originals
     public static class Patch_Corpse_ShouldVanish
     {
         [HarmonyPrefix]
-        public static bool Prefix(Corpse __instance, ref bool __result)
+        public static bool Prefix(Corpse __instance)
         {
             if (__instance == null || __instance.InnerPawn == null)
             {
-                __result = true;
                 return false;
             }
             return true;

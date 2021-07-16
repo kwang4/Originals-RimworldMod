@@ -72,7 +72,6 @@ namespace Originals
             }
 
 
-            Log.Message("Ticking");
 
             if (pawn.Dead)
             {
@@ -106,7 +105,7 @@ namespace Originals
                 setResHediffSeverity(oResHediff);
 
             }
-            if (oResHediff.Severity == 0 || (oResHediff.Severity <= .13 && Rand.Chance(0.4f)))
+            if ((oResHediff != null && oResHediff.Severity == 0) || (oResHediff != null && oResHediff.Severity <= .13 && Rand.Chance(0.4f)) || (oHediff.Severity < 0.5f && Current.Game.tickManager.TicksGame >= resTimer))
             {
                 if (oHediff.Severity < 0.5f)
                     oHediff.Severity = 0.5f; //Going from former mortal to lowblood
@@ -122,10 +121,42 @@ namespace Originals
 
         public void ResPawn(Pawn pawn)
         {
+            if (pawn == null || pawn.Corpse == null)
+                return;
+            #region hediffs
+
+
+            List<BodyPartRecord> regrowHediffParts = new List<BodyPartRecord>();
+            foreach (Hediff hediff in pawn.health.hediffSet.hediffs.ToList())
+            {
+                if (hediff.GetType() == typeof(Hediff_MissingPart))
+                {
+                    Hediff_MissingPart partDiff = hediff as Hediff_MissingPart;
+                    if (partDiff.Part != null && NeedPart(partDiff.Part))
+                    {
+                        pawn.health.RestorePart(partDiff.Part,null,true);
+                    }
+                    else
+                    {
+                        regrowHediffParts.Add(partDiff.Part);
+                    }
+                }
+            }
+
+            Pawn_HealthTracker health = pawn.health;
+            HediffSet hediffSet = health.hediffSet;
+            ImmunityHandler immunity = health.immunity;
+            pawn.health.hediffSet = new HediffSet(pawn);
+            pawn.health.immunity = new ImmunityHandler(pawn);
+            
+
+
+            #endregion
+
             int tile = -1;
             Caravan pawnCaravan = null;
             tile = pawn?.Corpse?.Tile ?? -1;
-            
+
             if (tile != -1)
             {
                 //Caravan Checks
@@ -141,7 +172,7 @@ namespace Originals
                     }
                 }
             }
-            if(!pawn.Corpse.Spawned && pawnCaravan == null)
+            if (!pawn.Corpse.Spawned && pawnCaravan == null)
             {
                 GenSpawn.Spawn(pawn.Corpse, pawn.PositionHeld, pawn.MapHeld, WipeMode.Vanish);
             }
@@ -151,8 +182,34 @@ namespace Originals
                 GenSpawn.Spawn(pawn.Corpse, storage.Position, storage.Map, WipeMode.Vanish);
 
             }
-            ResurrectionUtility.Resurrect(pawn);
-            pawn.health.Notify_Resurrected();
+            if (OriginalSettings.resSickness)
+                ResurrectionUtility.ResurrectWithSideEffects(pawn);
+            else
+                ResurrectionUtility.Resurrect(pawn);
+
+            foreach (Hediff hediff in hediffSet.hediffs.ToList())
+            {
+                if (hediff.TendableNow(false))
+                {
+                    hediff.Severity = 0.1f;
+                    HediffWithComps h = hediff as HediffWithComps;
+                    if (h != null)
+                    {
+                        HediffComp_TendDuration tend = h.TryGetComp<HediffComp_TendDuration>();
+                        tend.tendQuality = 0f;
+                        tend.tendTicksLeft = Find.TickManager.TicksGame;
+
+                    }
+                }
+                if (hediff.GetType() == typeof(Hediff_MissingPart))
+                {
+                    (hediff as Hediff_MissingPart).IsFresh = false;
+                }
+            }
+            DamageInfo dmg = new DamageInfo(DamageDefOf.Blunt, 0.5f, 0f, -1f, null, null, null, DamageInfo.SourceCategory.ThingOrUnknown, null);
+            pawn.health.hediffSet = hediffSet;
+           // pawn.TakeDamage(dmg);
+            pawn.health.immunity = immunity;
             removeResStatusHediff();
             if (pawnCaravan != null)
                 pawnCaravan.AddPawn(pawn, false);
@@ -161,13 +218,8 @@ namespace Originals
 
             Messages.Message(pawn.Name + " has resurrected!", MessageTypeDefOf.PositiveEvent, false);
 
-        }
 
 
-        public int getResurrectionLength()
-        {
-
-            return 0;
         }
 
         public bool CanBeOriginal()
@@ -236,6 +288,25 @@ namespace Originals
         public void setResTimer(int ticks)
         {
             resTimer = ticks;
+        }
+        public bool NeedPart(BodyPartRecord part)
+        {
+            if (part != null)
+            {
+                using (List<BodyPartTagDef>.Enumerator enumerator2 = part.def.tags.GetEnumerator())
+                {
+                    while (enumerator2.MoveNext())
+                    {
+                        if (enumerator2.Current.vital)
+                        {
+                            return true;
+                        }
+                    }
+
+                }
+                return false;
+            }
+            return false;
         }
 
     }
