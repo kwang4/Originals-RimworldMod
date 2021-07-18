@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OriginalLightning.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="CompProperties_Original.cs" />
     <Compile Include="JobDriver_StakePawn.cs" />

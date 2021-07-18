@@ -49,7 +49,7 @@ namespace Originals
                 Comp_Original oComp = __instance.InnerPawn.GetComp<Comp_Original>();
                 if(oComp != null && __instance.InnerPawn.health.hediffSet.HasHediff(OriginalDefOf.Original))
                 {
-                   oComp.TransferCheck();
+                   oComp.TransferCheck(__instance.InnerPawn);
                 }
             }
 

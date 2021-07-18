@@ -85,27 +85,30 @@ namespace Originals
 
         }
 
-        public void TransferCheck()
+        public void TransferCheck(Pawn pawn)
         {
-            Pawn pawn = parent as Pawn;
             Map map = pawn.MapHeld;
-            Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+            
+
             Pawn closest = null;
             int distance = 30;
             foreach(Pawn p in map.mapPawns.AllPawns)
             {
-                int checkDist = GetDistance(p.Position, pawn.Position);
-                if (p != pawn && pawn.health.hediffSet.HasHediff(OriginalDefOf.Original,false) && checkDist < distance)
+                int checkDist = GetDistance(p.Position, pawn.PositionHeld);
+                if (p != pawn && !p.Dead && p.health.hediffSet.HasHediff(OriginalDefOf.Original,false) && checkDist < distance)
                 {
                     closest = p;
                     distance = checkDist;
                 }
             }
-            if(closest != null)
+            if (closest != null)
             {
-                Hediff recipientOHediff = closest.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-                recipientOHediff.Severity += oHediff.Severity * OriginalSettings.originalTransferPercent;
+                Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+                closest.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original,false).Severity += oHediff.Severity * OriginalSettings.originalTransferPercent;
+                map.weatherManager.eventHandler.AddEvent(new WeatherEvent_OriginalLightning(map, closest.Position, 0, true));
+
             }
+            GenExplosion.DoExplosion(pawn.PositionHeld, map, 5.9f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false, null, null);
         }
 
         public void RareDeadTick(Pawn pawn)
