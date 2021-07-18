@@ -4,7 +4,7 @@
 <HediffDef>
     <defName>Original</defName>
     <label>original</label>
-    <description>A living being with healing powers bestowed upon them by the Original Vampires or their descendants. They have the ability to resurrect after death, provided .</description>
+    <description>A living being with healing powers bestowed upon them by the Original Vampires or their descendants. They have the ability to resurrect after death, provided their heart remains intact.</description>
     <defaultLabelColor>(164,64,225)</defaultLabelColor>
     <stages>
       <li>

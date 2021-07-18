@@ -92,7 +92,8 @@ namespace Originals
             if (wasDead == false)
             {
                 wasDead = true;
-                setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime);
+                int firstTimeOffset = (oHediff.Severity < 0.5f) ? OriginalSettings.baseResTime : 0;
+                setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime+ firstTimeOffset);
             }
             if (oHediff.Severity >= 0.5f) //Timer hediff
             {
@@ -102,10 +103,10 @@ namespace Originals
                     pawn.health.AddHediff(oResHediff);
                 }
 
-                setResHediffSeverity(oResHediff);
+                setResHediffSeverity(oResHediff, oHediff);
 
             }
-            if ((oResHediff != null && oResHediff.Severity == 0) || (oResHediff != null && oResHediff.Severity <= .13 && Rand.Chance(0.4f)) || (oHediff.Severity < 0.5f && Current.Game.tickManager.TicksGame >= resTimer))
+            if ((oResHediff != null && oResHediff.Severity == 0) || (oResHediff != null && oResHediff.Severity <= .13 && Rand.Chance(0.4f)) || (oHediff.Severity < 0.5f && Current.Game.tickManager.TicksGame >= resTimer) || (oResHediff.Severity == 2.0f))
             {
                 if (oHediff.Severity < 0.5f)
                     oHediff.Severity = 0.5f; //Going from former mortal to lowblood
@@ -191,7 +192,7 @@ namespace Originals
             {
                 if (hediff.TendableNow(false))
                 {
-                    hediff.Severity = 0.1f;
+                    hediff.Severity = 0.07f;
                     HediffWithComps h = hediff as HediffWithComps;
                     if (h != null)
                     {
@@ -278,11 +279,33 @@ namespace Originals
             return false;
         }
 
-        public void setResHediffSeverity(Hediff oResHediff)
+        public void setResHediffSeverity(Hediff oResHediff, Hediff oHediff)
         {
-            float missingPartOffset = hasMissingParts(2) ? (float)OriginalSettings.baseResTime / 3 : 0;
-            oResHediff.Severity = Math.Max((float)(resTimer - Current.Game.tickManager.TicksGame + missingPartOffset) / (float)OriginalSettings.baseResTime, 0);
+            float hediffStrengthMult = oHediffMultiplier(oHediff.Severity);
+            float missingPartOffset = hasMissingParts(2) ? (float)OriginalSettings.baseResTime / 2 : 0;
+            oResHediff.Severity = Math.Max((float)(resTimer - Current.Game.tickManager.TicksGame + missingPartOffset) / (float)OriginalSettings.baseResTime * hediffStrengthMult, 0);
 
+        }
+
+        public float oHediffMultiplier(float severity)
+        {
+            float multiplier = 1f;
+            switch(severity)
+            {
+                case float n when n < 1f:
+                    multiplier = Math.Min(1/severity,OriginalSettings.lowbloodMult); // Lowblood
+                    break;
+                case float n when n < 1.5f:
+                    multiplier = Math.Min(1 / severity, OriginalSettings.fullbloodMult); // Fullblood
+                    break;
+                case float n when n < 2.5f:
+                    multiplier = Math.Min(1 / severity, OriginalSettings.highbloodMult); // Highblood
+                    break;
+                case float n when n >= 2.5f:
+                    multiplier = Math.Min(1 / severity, OriginalSettings.originalMult); // Highblood
+                    break;
+            }
+            return multiplier;
         }
 
         public void setResTimer(int ticks)
