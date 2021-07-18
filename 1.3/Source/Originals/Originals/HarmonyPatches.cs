@@ -12,8 +12,8 @@ using Verse.AI;
 
 namespace Originals
 {
-   [StaticConstructorOnStartup]
-   public static class HarmonyPatches
+    [StaticConstructorOnStartup]
+    public static class HarmonyPatches
     {
         static HarmonyPatches()
         {
@@ -26,13 +26,35 @@ namespace Originals
     public static class Patch_Corpse_ShouldVanish
     {
         [HarmonyPrefix]
-        public static bool Prefix(Corpse __instance)
+        public static bool Prefix(Corpse __instance, ref bool __result)
         {
+
             if (__instance == null || __instance.InnerPawn == null)
             {
+                __result = false;
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Corpse), "Destroy", MethodType.Normal)]
+    public static class Patch_Corpse_Destroy
+    {
+        [HarmonyPrefix]
+        public static bool Prefix(Corpse __instance)
+        {
+            if(__instance.InnerPawn != null)
+            {
+                Comp_Original oComp = __instance.InnerPawn.GetComp<Comp_Original>();
+                if(oComp != null && __instance.InnerPawn.health.hediffSet.HasHediff(OriginalDefOf.Original))
+                {
+                   oComp.TransferCheck();
+                }
+            }
+
+            return true;
+
         }
     }
 

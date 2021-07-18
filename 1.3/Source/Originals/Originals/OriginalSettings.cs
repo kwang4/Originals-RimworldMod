@@ -16,6 +16,8 @@ namespace Originals
         public static float fullbloodMult = .82f;
         public static float highbloodMult = 0.65f;
         public static float originalMult = .45f;
+        public static float originalTransferPercent = 0.25f;
+
         public override void ExposeData()
         {
             Scribe_Values.Look(ref baseResTime, "O_baseResTime", 60000);
@@ -26,6 +28,7 @@ namespace Originals
             Scribe_Values.Look(ref fullbloodMult, "O_fullbloodMult", 0.85f);
             Scribe_Values.Look(ref highbloodMult, "O_highbloodMult", 0.7f);
             Scribe_Values.Look(ref originalMult, "O_originalMult", 0.45f);
+            Scribe_Values.Look(ref originalTransferPercent, "O_originalTransferPercent", 0.25f);
             base.ExposeData();
 
         }

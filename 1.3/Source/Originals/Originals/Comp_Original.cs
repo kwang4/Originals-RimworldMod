@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Verse;
 using RimWorld;
 using RimWorld.Planet;
+using UnityEngine;
 
 namespace Originals
 {
@@ -84,9 +85,31 @@ namespace Originals
 
         }
 
+        public void TransferCheck()
+        {
+            Pawn pawn = parent as Pawn;
+            Map map = pawn.MapHeld;
+            Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+            Pawn closest = null;
+            int distance = 30;
+            foreach(Pawn p in map.mapPawns.AllPawns)
+            {
+                int checkDist = GetDistance(p.Position, pawn.Position);
+                if (p != pawn && pawn.health.hediffSet.HasHediff(OriginalDefOf.Original,false) && checkDist < distance)
+                {
+                    closest = p;
+                    distance = checkDist;
+                }
+            }
+            if(closest != null)
+            {
+                Hediff recipientOHediff = closest.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+                recipientOHediff.Severity += oHediff.Severity * OriginalSettings.originalTransferPercent;
+            }
+        }
+
         public void RareDeadTick(Pawn pawn)
         {
-
             Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
             Hediff oResHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.O_ResStatus, false);
             if (wasDead == false)
@@ -106,7 +129,7 @@ namespace Originals
                 setResHediffSeverity(oResHediff, oHediff);
 
             }
-            if ((oResHediff != null && oResHediff.Severity == 0) || (oResHediff != null && oResHediff.Severity <= .13 && Rand.Chance(0.4f)) || (oHediff.Severity < 0.5f && Current.Game.tickManager.TicksGame >= resTimer) || (oResHediff.Severity == 2.0f))
+            if ((oResHediff != null && oResHediff.Severity == 0) || (oResHediff != null && oResHediff.Severity <= .13 && Rand.Chance(0.4f)) || (oHediff.Severity < 0.5f && Current.Game.tickManager.TicksGame >= resTimer) || (oResHediff != null && oResHediff.Severity == 2.0f))
             {
                 if (oHediff.Severity < 0.5f)
                     oHediff.Severity = 0.5f; //Going from former mortal to lowblood
@@ -330,6 +353,11 @@ namespace Originals
                 return false;
             }
             return false;
+        }
+
+        public int GetDistance(IntVec3 vec1, IntVec3 vec2)
+        {
+            return Mathf.RoundToInt((float)Math.Sqrt(Math.Pow((double)Math.Abs(vec1.x - vec2.x), 2.0) + Math.Pow((double)Math.Abs(vec1.z - vec2.z), 2.0)));
         }
 
     }
