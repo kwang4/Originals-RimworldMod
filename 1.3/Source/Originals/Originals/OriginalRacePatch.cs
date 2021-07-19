@@ -26,7 +26,7 @@ namespace Originals
                     }
                         
                     thing.comps.Add(new CompProperties_Original());
-                    Log.Message($"{thing.defName} patched by Originals");
+                   // Log.Message($"{thing.defName} patched by Originals");
                 }
             }
         }

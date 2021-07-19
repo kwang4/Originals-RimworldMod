@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
+using RimWorld;
 namespace Originals
 {
     public class OriginalSettings:ModSettings
@@ -19,7 +20,7 @@ namespace Originals
         public static float originalTransferPercent = 0.2f;
         public static int originalRegenPartTime = 60000;
         public static int ticksTillHeal = 1800;
-        public static List<HediffDef> oldAgeHediffs = new List<HediffDef>();
+        
 
         public override void ExposeData()
         {
@@ -36,7 +37,10 @@ namespace Originals
             Scribe_Values.Look(ref ticksTillHeal, "O_ticksTillHeal", 1800);
             base.ExposeData();
 
+
         }
+
+
 
     }
 }

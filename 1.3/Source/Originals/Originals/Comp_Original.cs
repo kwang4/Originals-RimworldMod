@@ -154,6 +154,7 @@ namespace Originals
                 {
                     TryHealScars(pawn);
                     TryHealWounds(pawn);
+                    TryHealOldAge(pawn);
                 }
                 if (oHediff != null && oHediff.Severity >= 1f)
                 {
@@ -181,6 +182,26 @@ namespace Originals
 
         }
 
+        public void TryHealOldAge(Pawn pawn)
+        {
+            
+            IEnumerable<Hediff> hediffs = from hd in pawn.health.hediffSet.hediffs where OriginalDefLoader.oldAgeHediffs.Contains(hd.def) select hd;
+            if (hediffs.Count() == 0)
+            {
+                return;
+            }
+
+            foreach(Hediff hediffToHeal in hediffs)
+            {
+                if (hediffToHeal != null)
+                {
+                    pawn.health.RemoveHediff(hediffToHeal);
+                }
+            }
+
+
+        }
+
         public void TryHealScars(Pawn pawn)
         {
             IEnumerable<Hediff> hediffs = from hd in pawn.health.hediffSet.hediffs where hd.IsPermanent() && hd.def.isBad select hd;
@@ -192,8 +213,6 @@ namespace Originals
                 pawn.health.RemoveHediff(hediffToHeal);
             }
 
-
-
         }
 
         public void TryHealWounds(Pawn pawn)
@@ -204,12 +223,12 @@ namespace Originals
             Hediff hediffToHeal = hediffs.RandomElement<Hediff>();
             if (hediffToHeal != null)
             {
-
+                hediffToHeal.Severity = 0.2f;
                 HediffWithComps hediffWithComps = hediffToHeal as HediffWithComps;
                 if (hediffWithComps != null)
                 {
                     HediffComp_TendDuration tend = hediffWithComps.TryGetComp<HediffComp_TendDuration>();
-                    tend.tendQuality = 1f;
+                    tend.tendQuality = 2f;
                     tend.tendTicksLeft = Find.TickManager.TicksGame;
                     pawn.health.Notify_HediffChanged(hediffToHeal);
                 }
