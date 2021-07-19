@@ -19,5 +19,5 @@ Original: Someone who was either descended directly from the Originals themselve
 
 This mod does not utilize GameComponent as the main driver for immortality, but instead uses ThingComp and patches all humanoid races (with exceptions for androids and mechanical pawns). This method should be credited to Neronix17's Celestial Mod, a lightweight resurrection mod. Still, I felt it was a bit light and wanted to add more in depth stuff like healing wounds while dead and a staking mechanic.
 
-No, this is not a full vampire + immortality mod. Why? I am not Jecrell, I'm but a novice modder who makes up for lack of skill with a lot of time. The only reason I got this far is because I wanted something like the highlanders Immortal mod for 1.3, but didn't want to wait. Therefore, here we are, a fully functional resurrection mod to allow you to keep pawns close to your heart alive, forever.
+No, this is not a full vampire + immortality mod. Why? I am not Jecrell, I'm but a novice modder who makes up for lack of skill with a lot of time. The only reason I got this far is because I wanted something like the highlanders Immortal mod for 1.3, but didn't want to wait. Therefore, here we are, a fully functional resurrection mod to allow you to keep pawns that are close to your heart alive, forever.
 
