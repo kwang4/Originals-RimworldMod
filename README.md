@@ -1,7 +1,7 @@
 # Originals
 A Rimworld 1.3 spinoff of the Immortals (Highlander) mod by fridgeBaron, with a few key mechanical differences. Similar to immortality mechanics in TVD and Originals TV Series, immortality is now based on the heart, which is linked to blood. Staking an Original slows down their immortality and ability to resurrect, and destruction of the heart is key to finishing off an Original for good. A dead immortal releases a shockwave, and other lucky immortals in the area will be able to absorbe their power and increase their own Originality, possibly increasing their resurrection powers as well.
 
-*Categories*
+**Categories**
 
 Mortal: Lowest tier of Original, those who have just enough original blood flowing through their blood to trigger a transformation into a lowblooded Original on their death. However, no one knows they're immortal until they face death for the first time, as they exhibit no special healing or regrowing properties.
 
