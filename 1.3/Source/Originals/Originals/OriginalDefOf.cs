@@ -17,5 +17,6 @@ public static class OriginalDefOf
         }
         public static HediffDef Original;
         public static HediffDef O_ResStatus;
+        public static HediffDef O_RegenBodyPart;
     }
 }

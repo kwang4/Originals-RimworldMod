@@ -8,15 +8,18 @@ namespace Originals
 {
     public class OriginalSettings:ModSettings
     {
-        public static int baseResTime = 70000;
+        public static int baseResTime = 60000;
         public static float originalChance = 0.05f;
         public static bool resSickness = false;
         public static bool healScars = true;
         public static float lowbloodMult = 1.3f;
         public static float fullbloodMult = .82f;
         public static float highbloodMult = 0.65f;
-        public static float originalMult = .45f;
-        public static float originalTransferPercent = 0.25f;
+        public static float originalMult = .4f;
+        public static float originalTransferPercent = 0.2f;
+        public static int originalRegenPartTime = 60000;
+        public static int ticksTillHeal = 1800;
+        public static List<HediffDef> oldAgeHediffs = new List<HediffDef>();
 
         public override void ExposeData()
         {
@@ -26,9 +29,11 @@ namespace Originals
             Scribe_Values.Look(ref healScars, "O_healScars", true);
             Scribe_Values.Look(ref lowbloodMult, "O_lowbloodMult", 1.3f);
             Scribe_Values.Look(ref fullbloodMult, "O_fullbloodMult", 0.85f);
-            Scribe_Values.Look(ref highbloodMult, "O_highbloodMult", 0.7f);
-            Scribe_Values.Look(ref originalMult, "O_originalMult", 0.45f);
-            Scribe_Values.Look(ref originalTransferPercent, "O_originalTransferPercent", 0.25f);
+            Scribe_Values.Look(ref highbloodMult, "O_highbloodMult", 0.65f);
+            Scribe_Values.Look(ref originalMult, "O_originalMult", 0.4f);
+            Scribe_Values.Look(ref originalTransferPercent, "O_originalTransferPercent", 0.2f);
+            Scribe_Values.Look(ref originalRegenPartTime, "O_originalRegenPartTime", 60000);
+            Scribe_Values.Look(ref ticksTillHeal, "O_ticksTillHeal", 1800);
             base.ExposeData();
 
         }

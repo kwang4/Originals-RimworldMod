@@ -6,6 +6,7 @@
     <label>original</label>
     <description>A living being with healing powers bestowed upon them by the Original Vampires or their descendants. They have the ability to resurrect after death, provided their heart remains intact.</description>
     <defaultLabelColor>(164,64,225)</defaultLabelColor>
+    <initialSeverity>0.3</initialSeverity>
     <stages>
       <li>
         <label>Mortal</label>
@@ -59,6 +60,40 @@
         <label>Regrowing</label>
         <minSeverity>1</minSeverity>
      </li>
+    </stages>
+  </HediffDef>
+
+      <HediffDef>
+    <defName>O_RegenBodyPart</defName>
+    <hediffClass>HediffWithComps</hediffClass>
+    <defaultLabelColor>(76, 227, 73)</defaultLabelColor>
+    <description>This body part is regrowing, and is not yet fully functional.</description>
+    <label>Regrowing</label>
+    <maxSeverity>1.5</maxSeverity>
+        <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-1</severityPerDay>
+      </li>
+    </comps>
+    <stages>
+       <li>
+        <label>Integrating</label>
+        <minSeverity>0.2</minSeverity>
+        <painOffset>0.05</painOffset>
+        <partEfficiencyOffset>-0.2</partEfficiencyOffset>
+     </li>
+            <li>
+        <label>Shaping</label>
+        <minSeverity>.3</minSeverity>
+        <painOffset>0.15</painOffset>
+        <partEfficiencyOffset>-0.6</partEfficiencyOffset>
+     </li>
+            <li>
+        <label>Forming</label>
+        <minSeverity>.7</minSeverity>
+        <painOffset>0.2</painOffset>
+        <partEfficiencyOffset>-1.0</partEfficiencyOffset>
+        </li>
     </stages>
   </HediffDef>
 	

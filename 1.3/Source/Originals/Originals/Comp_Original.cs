@@ -16,6 +16,7 @@ namespace Originals
         public bool isOriginal = false;
         public bool wasDead = false;
         public int resTimer = 0;
+        public int ticksTillHeal;
 
         public override void PostExposeData()
         {
@@ -24,6 +25,7 @@ namespace Originals
             Scribe_Values.Look(ref isOriginal, "isOriginal", false);
             Scribe_Values.Look(ref wasDead, "wasDead", false);
             Scribe_Values.Look(ref resTimer, "resTimer", 0);
+            Scribe_Values.Look(ref ticksTillHeal, "O_ticksTillHeal", 0);
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
@@ -80,7 +82,7 @@ namespace Originals
             }
             else
             {
-                RareLivingTick();
+                RareLivingTick(pawn);
             }
 
         }
@@ -88,14 +90,14 @@ namespace Originals
         public void TransferCheck(Pawn pawn)
         {
             Map map = pawn.MapHeld;
-            
+
 
             Pawn closest = null;
-            int distance = 30;
-            foreach(Pawn p in map.mapPawns.AllPawns)
+            int distance = 20;
+            foreach (Pawn p in map.mapPawns.AllPawns)
             {
                 int checkDist = GetDistance(p.Position, pawn.PositionHeld);
-                if (p != pawn && !p.Dead && p.health.hediffSet.HasHediff(OriginalDefOf.Original,false) && checkDist < distance)
+                if (p != pawn && !p.Dead && p.health.hediffSet.HasHediff(OriginalDefOf.Original, false) && checkDist < distance)
                 {
                     closest = p;
                     distance = checkDist;
@@ -104,11 +106,11 @@ namespace Originals
             if (closest != null)
             {
                 Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-                closest.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original,false).Severity += oHediff.Severity * OriginalSettings.originalTransferPercent;
+                closest.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false).Severity += oHediff.Severity * OriginalSettings.originalTransferPercent;
                 map.weatherManager.eventHandler.AddEvent(new WeatherEvent_OriginalLightning(map, closest.Position, 0, true));
-
+                map.weatherManager.eventHandler.AddEvent(new WeatherEvent_OriginalLightning(map, closest.Position, 0, true));
             }
-            GenExplosion.DoExplosion(pawn.PositionHeld, map, 5.9f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false, null, null);
+            GenExplosion.DoExplosion(pawn.PositionHeld, map, distance + 3f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false, null, null);
         }
 
         public void RareDeadTick(Pawn pawn)
@@ -119,7 +121,7 @@ namespace Originals
             {
                 wasDead = true;
                 int firstTimeOffset = (oHediff.Severity < 0.5f) ? OriginalSettings.baseResTime : 0;
-                setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime+ firstTimeOffset);
+                setResTimer(Current.Game.tickManager.TicksGame + OriginalSettings.baseResTime + firstTimeOffset);
             }
             if (oHediff.Severity >= 0.5f) //Timer hediff
             {
@@ -141,9 +143,113 @@ namespace Originals
             }
         }
 
-        public void RareLivingTick()
+        public void RareLivingTick(Pawn pawn)
         {
             wasDead = false;
+            if (Current.Game.tickManager.TicksGame >= ticksTillHeal)
+            {
+                Hediff oHediff = pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+
+                if(oHediff != null && oHediff.Severity >= 0.5f)
+                {
+                    TryHealScars(pawn);
+                    TryHealWounds(pawn);
+                }
+                if (oHediff != null && oHediff.Severity >= 1f)
+                {
+                    TryRegenPart(pawn);
+                }
+
+                float multiplier = 1f;
+                switch (pawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false).Severity)
+                {
+                    case float n when n < 1f:
+                        multiplier = OriginalSettings.lowbloodMult; // Lowblood
+                        break;
+                    case float n when n < 1.5f:
+                        multiplier = 1f;
+                        break;
+                    case float n when n < 2.5f:
+                        multiplier = OriginalSettings.highbloodMult;
+                        break;
+                    case float n when n >= 2.5f:
+                        multiplier = Math.Max(OriginalSettings.highbloodMult - .1f, 0); // Highblood
+                        break;
+                }
+                ticksTillHeal = (int)(Current.Game.tickManager.TicksGame + OriginalSettings.ticksTillHeal * multiplier);
+            }
+
+        }
+
+        public void TryHealScars(Pawn pawn)
+        {
+            IEnumerable<Hediff> hediffs = from hd in pawn.health.hediffSet.hediffs where hd.IsPermanent() && hd.def.isBad select hd;
+            if (hediffs.Count() == 0)
+                return;
+            Hediff hediffToHeal = hediffs.RandomElement<Hediff>();
+            if (hediffToHeal != null)
+            {
+                pawn.health.RemoveHediff(hediffToHeal);
+            }
+
+
+
+        }
+
+        public void TryHealWounds(Pawn pawn)
+        {
+            IEnumerable<Hediff> hediffs = from hd in pawn.health.hediffSet.hediffs where hd.Bleeding || hd.IsTended() select hd;
+            if (hediffs.Count() == 0)
+                return;
+            Hediff hediffToHeal = hediffs.RandomElement<Hediff>();
+            if (hediffToHeal != null)
+            {
+
+                HediffWithComps hediffWithComps = hediffToHeal as HediffWithComps;
+                if (hediffWithComps != null)
+                {
+                    HediffComp_TendDuration tend = hediffWithComps.TryGetComp<HediffComp_TendDuration>();
+                    tend.tendQuality = 1f;
+                    tend.tendTicksLeft = Find.TickManager.TicksGame;
+                    pawn.health.Notify_HediffChanged(hediffToHeal);
+                }
+
+
+            }
+        }
+
+        public void TryRegenPart(Pawn pawn)
+        {
+            if (pawn.health.hediffSet.PainTotal >= 0.6)
+            {
+                return;
+            }
+            BodyPartRecord part = FindBiggestMissingBodyPartNotRegenerating(pawn, 0);
+            if (part != null)
+            {
+
+                pawn.health.RestorePart(part, null, true);
+                Hediff regrow = HediffMaker.MakeHediff(OriginalDefOf.O_RegenBodyPart, pawn, part);
+                regrow.Severity = 1f * ((float)OriginalSettings.originalRegenPartTime / 60000f);
+                if (part.coverageAbsWithChildren <= 0.1)
+                    regrow.Severity *= 0.7f;
+                pawn.health.AddHediff(regrow);
+            }
+
+
+        }
+
+        private BodyPartRecord FindBiggestMissingBodyPartNotRegenerating(Pawn pawn, float minCoverage = 0f)
+        {
+            BodyPartRecord bodyPartRecord = null;
+            foreach (Hediff_MissingPart hediff_MissingPart in pawn.health.hediffSet.GetMissingPartsCommonAncestors())
+            {
+                if (hediff_MissingPart.Part.coverageAbsWithChildren >= minCoverage && !pawn.health.hediffSet.PartOrAnyAncestorHasDirectlyAddedParts(hediff_MissingPart.Part) && (bodyPartRecord == null || hediff_MissingPart.Part.coverageAbsWithChildren > bodyPartRecord.coverageAbsWithChildren))
+                {
+                    bodyPartRecord = hediff_MissingPart.Part;
+                }
+            }
+            return bodyPartRecord;
         }
 
         public void ResPawn(Pawn pawn)
@@ -161,7 +267,7 @@ namespace Originals
                     Hediff_MissingPart partDiff = hediff as Hediff_MissingPart;
                     if (partDiff.Part != null && NeedPart(partDiff.Part))
                     {
-                        pawn.health.RestorePart(partDiff.Part,null,true);
+                        pawn.health.RestorePart(partDiff.Part, null, true);
                     }
                     else
                     {
@@ -175,7 +281,7 @@ namespace Originals
             ImmunityHandler immunity = health.immunity;
             pawn.health.hediffSet = new HediffSet(pawn);
             pawn.health.immunity = new ImmunityHandler(pawn);
-            
+
 
 
             #endregion
@@ -213,7 +319,6 @@ namespace Originals
                 ResurrectionUtility.ResurrectWithSideEffects(pawn);
             else
                 ResurrectionUtility.Resurrect(pawn);
-
             foreach (Hediff hediff in hediffSet.hediffs.ToList())
             {
                 if (hediff.TendableNow(false))
@@ -235,7 +340,7 @@ namespace Originals
             }
             DamageInfo dmg = new DamageInfo(DamageDefOf.Blunt, 0.5f, 0f, -1f, null, null, null, DamageInfo.SourceCategory.ThingOrUnknown, null);
             pawn.health.hediffSet = hediffSet;
-           // pawn.TakeDamage(dmg);
+            // pawn.TakeDamage(dmg);
             pawn.health.immunity = immunity;
             removeResStatusHediff();
             if (pawnCaravan != null)
@@ -267,6 +372,7 @@ namespace Originals
             originalHediff.Severity = severity;
             p.health.AddHediff(originalHediff);
         }
+
 
         public void removeOriginalHediff()
         {
@@ -316,10 +422,10 @@ namespace Originals
         public float oHediffMultiplier(float severity)
         {
             float multiplier = 1f;
-            switch(severity)
+            switch (severity)
             {
                 case float n when n < 1f:
-                    multiplier = Math.Min(1/severity,OriginalSettings.lowbloodMult); // Lowblood
+                    multiplier = Math.Min(1 / severity, OriginalSettings.lowbloodMult); // Lowblood
                     break;
                 case float n when n < 1.5f:
                     multiplier = Math.Min(1 / severity, OriginalSettings.fullbloodMult); // Fullblood

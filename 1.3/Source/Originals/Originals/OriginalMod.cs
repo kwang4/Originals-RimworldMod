@@ -22,6 +22,12 @@ namespace Originals
             listingStandard.Begin(inRect);
             listingStandard.CheckboxLabeled("Resurrection sickness", ref OriginalSettings.resSickness, "Should a resurrected pawn have resurrection sickness after coming back");
             listingStandard.CheckboxLabeled("Heal Scars", ref OriginalSettings.healScars, "Should Originals heal scars (brain damage, gunshot scars, etc)");
+            listingStandard.Label("Body Part Regen Time: " + OriginalSettings.originalRegenPartTime, -1, "Ticks to fully regenerate a body part.");
+            listingStandard.Label("Default: 60000 ticks (1 Day)");
+            OriginalSettings.originalRegenPartTime = (int)listingStandard.Slider(OriginalSettings.originalRegenPartTime, 0, 60000);
+            listingStandard.Label("Original Healing Rate: " + OriginalSettings.ticksTillHeal + " ticks",-1,"Ticks between an Original's passive healing, 1800 Default");
+            OriginalSettings.ticksTillHeal = (int)listingStandard.Slider(OriginalSettings.ticksTillHeal, 0, 10000);
+
             listingStandard.GapLine(12);
             listingStandard.Label("Original Chance: " + OriginalSettings.originalChance);
             listingStandard.Label("Default: 0.05 (5%)");
@@ -35,12 +41,12 @@ namespace Originals
             OriginalSettings.lowbloodMult = listingStandard.Slider(OriginalSettings.lowbloodMult, 1, 2);
             listingStandard.Label("Fullblood Resurrection Multiplier: " + OriginalSettings.fullbloodMult, -1, "Multiplier for how long resurrection takes relative to fullblood resurrection. (Default 0.82 means it'll take 0.82x fullblood res time minimum, factoring in hediff strength)");
             OriginalSettings.fullbloodMult = listingStandard.Slider(OriginalSettings.fullbloodMult, 0, 1);
-            listingStandard.Label("Highblood Resurrection Multiplier: " + OriginalSettings.highbloodMult, -1, "Multiplier for how long resurrection takes relative to fullblood resurrection. (Default 0.7 means it'll take 0.7x fullblood res time minimum, factoring in hediff strength)");
+            listingStandard.Label("Highblood Resurrection Multiplier: " + OriginalSettings.highbloodMult, -1, "Multiplier for how long resurrection takes relative to fullblood resurrection. (Default 0.6 means it'll take 0.6x fullblood res time minimum, factoring in hediff strength)");
             OriginalSettings.highbloodMult = listingStandard.Slider(OriginalSettings.highbloodMult, 0, 1);
-            listingStandard.Label("Original Resurrection Multiplier: " + OriginalSettings.originalMult, -1, "Multiplier for how long resurrection takes relative to fullblood resurrection. (Default 0.45 means it'll take 0.45x fullblood res time minimum, factoring in hediff strength)");
+            listingStandard.Label("Original Resurrection Multiplier: " + OriginalSettings.originalMult, -1, "Multiplier for how long resurrection takes relative to fullblood resurrection. (Default 0.4 means it'll take 0.4x fullblood res time minimum, factoring in hediff strength)");
             OriginalSettings.originalMult = listingStandard.Slider(OriginalSettings.originalMult, 0, 1);
             listingStandard.Label("Original Power Transfer Percent: " + OriginalSettings.originalTransferPercent,-1,"Percentage of an Original's power is absorbed by another Original when they die.");
-            listingStandard.Label("Default: 0.25 (25%)");
+            listingStandard.Label("Default: 0.2 (20%)");
             OriginalSettings.originalTransferPercent = listingStandard.Slider(OriginalSettings.originalTransferPercent, 0, 1);
             listingStandard.End();
             base.DoSettingsWindowContents(inRect);
