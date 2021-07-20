@@ -10,6 +10,8 @@ namespace Originals
     public class OriginalMod : Mod
     {
         OriginalSettings settings;
+        private Vector2 scrollPos = Vector2.zero;
+        private Rect scrollRect;
         public OriginalMod(ModContentPack content):base(content)
         {
             this.settings = GetSettings<OriginalSettings>();
@@ -18,8 +20,15 @@ namespace Originals
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
+
+
             Listing_Standard listingStandard = new Listing_Standard();
-            listingStandard.Begin(inRect);
+            Widgets.BeginScrollView(inRect, ref scrollPos, scrollRect);
+            inRect.height = 100000f;
+            inRect.width -= 20;
+            listingStandard.Begin(inRect.AtZero());
+            listingStandard.Label("Living Settings");
+            listingStandard.CheckboxLabeled("Immortal needs heart", ref OriginalSettings.needHeart, "If checked, when the heart is destroyed, an immortal dies for good");
             listingStandard.CheckboxLabeled("Resurrection sickness", ref OriginalSettings.resSickness, "Should a resurrected pawn have resurrection sickness after coming back");
             listingStandard.CheckboxLabeled("Heal Scars", ref OriginalSettings.healScars, "Should Originals heal scars (brain damage, gunshot scars, etc)");
             listingStandard.Label("Body Part Regen Time: " + OriginalSettings.originalRegenPartTime, -1, "Ticks to fully regenerate a body part.");
@@ -28,7 +37,8 @@ namespace Originals
             listingStandard.Label("Original Healing Rate: " + OriginalSettings.ticksTillHeal + " ticks",-1,"Ticks between an Original's passive healing, 1800 Default");
             OriginalSettings.ticksTillHeal = (int)listingStandard.Slider(OriginalSettings.ticksTillHeal, 0, 10000);
 
-            listingStandard.GapLine(12);
+            listingStandard.GapLine(6);
+            listingStandard.Label("Resurrection Settings");
             listingStandard.Label("Original Chance: " + OriginalSettings.originalChance);
             listingStandard.Label("Default: 0.05 (5%)");
             OriginalSettings.originalChance = listingStandard.Slider(OriginalSettings.originalChance, 0, 1);
@@ -48,7 +58,23 @@ namespace Originals
             listingStandard.Label("Original Power Transfer Percent: " + OriginalSettings.originalTransferPercent,-1,"Percentage of an Original's power is absorbed by another Original when they die.");
             listingStandard.Label("Default: 0.2 (20%)");
             OriginalSettings.originalTransferPercent = listingStandard.Slider(OriginalSettings.originalTransferPercent, 0, 1);
+            listingStandard.GapLine(6);
+            listingStandard.Label("Staking Settings");
+            listingStandard.Label("Mortal Stake Days: " + OriginalSettings.mortalStakeMult,-1,"Days an Original will be downed by the staking mechanic, Default: 4");
+            listingStandard.Slider(OriginalSettings.mortalStakeMult, 0, 5);
+            listingStandard.Label("Lowblood Stake Days: " + OriginalSettings.lowStakeMult, -1, "Days an Original will be downed by the staking mechanic, Default: 2.5");
+            listingStandard.Slider(OriginalSettings.lowStakeMult, 0, 5);
+            listingStandard.Label("Fullblood Stake Days: " + OriginalSettings.fullStakeMult, -1, "Days an Original will be downed by the staking mechanic, Default: 2");
+            listingStandard.Slider(OriginalSettings.fullStakeMult, 0, 5);
+            listingStandard.Label("Highblood Stake Days: " + OriginalSettings.highStakeMult, -1, "Days an Original will be downed by the staking mechanic, Default: 1");
+            listingStandard.Slider(OriginalSettings.highStakeMult, 0, 5);
+            listingStandard.Label("Original Stake Days: " + OriginalSettings.originalStakeMult, -1, "Days an Original will be downed by the staking mechanic, Default: 0.4");
+            listingStandard.Slider(OriginalSettings.originalStakeMult, 0, 5);
+            scrollRect = new Rect(0f, 0f, inRect.width, listingStandard.CurHeight+100);
+            
+            Widgets.EndScrollView();
             listingStandard.End();
+
             base.DoSettingsWindowContents(inRect);
 
         }
@@ -56,6 +82,21 @@ namespace Originals
         public override string SettingsCategory()
         {
             return "Originals";
+        }
+
+        public void BeginScrollView(Listing_Standard listing, Rect rect, ref Vector2 scrollPosition, ref Rect viewRect)
+        {
+            Widgets.BeginScrollView(rect, ref scrollPosition, viewRect, true);
+            rect.height = 100000f;
+            rect.width -= 20f;
+            listing.Begin(rect.AtZero());
+        }
+
+        public void EndScrollView(Listing_Standard listing, ref Rect viewRect)
+        {
+           // viewRect = new Rect(0f, 0f, viewRect.width, viewRect.curY);
+            Widgets.EndScrollView();
+            listing.End();
         }
     }
 }

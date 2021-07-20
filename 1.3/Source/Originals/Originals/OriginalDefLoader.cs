@@ -8,7 +8,7 @@ using Verse;
 namespace Originals
 {
     [StaticConstructorOnStartup]
-    class OriginalDefLoader
+   static class OriginalDefLoader
     {
         public static List<HediffDef> oldAgeHediffs = new List<HediffDef>();
          static OriginalDefLoader()
@@ -30,6 +30,11 @@ namespace Originals
                     }
                 }
             }
+        }
+
+        public static BodyPartRecord GetNotMissingPart(this Pawn pawn, BodyPartDef def)
+        {
+            return pawn.health.hediffSet.GetNotMissingParts(0, 0, null, null).FirstOrDefault(x => x.def == def);
         }
     }
 }

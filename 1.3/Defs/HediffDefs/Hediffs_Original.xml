@@ -19,17 +19,41 @@
        <li>
         <label>Fullblood</label>
         <minSeverity>1</minSeverity>
-        <painFactor>1</painFactor>
+        <painFactor>.9</painFactor>
      </li>
        <li>
         <label>Highblood</label>
         <minSeverity>1.5</minSeverity>
-        <painFactor>0.3</painFactor>
+        <painFactor>0.4</painFactor>
+            <capMods>
+            <li>
+              <capacity>Consciousness</capacity>
+              <postFactor>1.05</postFactor>
+            </li>
+        <li>
+          <capacity>Manipulation</capacity>
+          <postFactor>1.05</postFactor>
+        </li>
+            </capMods>
       </li>
        <li>
         <label>Original</label>
         <minSeverity>2.5</minSeverity>
-        <painFactor>0.1</painFactor>
+        <painFactor>0.15</painFactor>
+            <capMods>
+            <li>
+              <capacity>Consciousness</capacity>
+              <postFactor>1.2</postFactor>
+            </li>
+              <li>
+                <capacity>Moving</capacity>
+                <postFactor>1.1</postFactor>
+              </li>
+        <li>
+          <capacity>Manipulation</capacity>
+          <postFactor>1.1</postFactor>
+        </li>
+            </capMods>
       </li>
     </stages>
   </HediffDef>
@@ -39,7 +63,7 @@
     <defaultLabelColor>(1, 1, 1)</defaultLabelColor>
     <description>Resurrection Status hediff, approximates what stage of resurrection an Original is on.</description>
     <label>Resurrecting</label>
-    <maxSeverity>2.0</maxSeverity>
+    <maxSeverity>6.0</maxSeverity>
     <stages>
       <li>
         <label>Reanimating</label>
@@ -94,6 +118,38 @@
         <painOffset>0.2</painOffset>
         <partEfficiencyOffset>-1.0</partEfficiencyOffset>
         </li>
+    </stages>
+  </HediffDef>
+
+
+        <HediffDef>
+    <defName>O_Staked</defName>
+    <hediffClass>HediffWithComps</hediffClass>
+    <defaultLabelColor>(76, 227, 73)</defaultLabelColor>
+    <description>A stake has been shoved through the heart, preventing all but the most powerful Originals from resurrecting.</description>
+    <label>Staked</label>
+    <maxSeverity>5</maxSeverity>
+        <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-1</severityPerDay>
+      </li>
+    </comps>
+    <stages>
+       <li>
+        <label>Staked</label>
+        <minSeverity>0.01</minSeverity>
+        <painOffset>1</painOffset>
+            <capMods>
+              <li>
+                <capacity>Consciousness</capacity>
+                <setMax>.1</setMax>
+              </li>
+              <li>
+                <capacity>Moving</capacity>
+                <offset>-0.5</offset>
+              </li>
+            </capMods>
+      </li>
     </stages>
   </HediffDef>
 	

@@ -13,6 +13,9 @@ Highblood: Much improved healing powers, and resurrection is faster compared to 
 
 Original: Someone who was either descended directly from the Originals themselves, or who have killed so many other Originals that their power has increased to unfathomable levels. These beings have blazing fast resurrection, regeneration, and healing times, and are nearly impossible to best without an army against them.
 
+**Staking**
+Any pawn can be staked when incapacitated, and it is a simple way of determining whether a pawn is Original or not. If they are, they will recieve a staked hediff, and be quite incapacitated for a while. If not, their heart will be destroyed and they will promptly die. Any dead body can be staked, and for Originals who are staked, and it will increase thei resurrection time by a massive factor, usually a few days, depending on the amount of Original power they possess. This is very useful for dealing with the highest tier Originals, as they have very fast resurrection speeds. This mechanic is not fully fleshed out yet, and might be updated in the future.
+
 
 
 **Technical Stuff**

@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JobDriver_StakeCorpse.cs" />
     <Compile Include="OriginalDefLoader.cs" />
     <Compile Include="OriginalLightning.cs" />
     <Compile Include="HarmonyPatches.cs" />

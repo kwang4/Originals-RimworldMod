@@ -49,7 +49,7 @@ namespace Originals
                 Comp_Original oComp = __instance.InnerPawn.GetComp<Comp_Original>();
                 if(oComp != null && __instance.InnerPawn.health.hediffSet.HasHediff(OriginalDefOf.Original))
                 {
-                   oComp.TransferCheck(__instance.InnerPawn);
+                   oComp.TransferOriginalPower(__instance.InnerPawn);
                 }
             }
 
@@ -69,26 +69,10 @@ namespace Originals
             IntVec3 c = IntVec3.FromVector3(clickPos);
             foreach (Thing t in c.GetThingList(pawn.Map))
             {
-                Pawn target = t as Pawn;
-                if (target != null)
-                {
-                    if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
-                    {
-                        continue;
-                    }
-                    JobDef killTarget = DefDatabase<JobDef>.GetNamed("StakePawn");
-                    Action action = () =>
-                    {
-                        Job job = new Job(killTarget, target);
-                        job.count = 1;
-                        pawn.jobs.TryTakeOrderedJob(job);
-                    };
-                    string text = "Stake pawn";
-                    FloatMenuOption menuOption = new FloatMenuOption(text, action, MenuOptionPriority.AttackEnemy, null, null, 0f, null, null);
-                    opts.Add(menuOption);
-                }
+                LivingPawnStake(pawn, t, opts);
+                CorpseStake(pawn, t, opts);
             }
-            foreach (LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackAny(), true, null))
+/*            foreach (LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackAny(), true, null))
             {
                 Pawn target = (Pawn)targetInfo.Thing;
                 if (!target.Downed && target.Awake())
@@ -109,6 +93,54 @@ namespace Originals
                 opts.Add(menuOption);
 
 
+            }*/
+        }
+
+        public static void LivingPawnStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
+        {
+            Pawn target = t as Pawn;
+            if (target != null)
+            {
+                if (!target.Downed && target.Awake())
+                    return;
+
+                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
+                {
+                    return;
+                }
+                JobDef killTarget = DefDatabase<JobDef>.GetNamed("StakePawn");
+                Action action = () =>
+                {
+                    Job job = new Job(killTarget, target);
+                    job.count = 1;
+                    pawn.jobs.TryTakeOrderedJob(job);
+                };
+                string text = "Stake pawn";
+                FloatMenuOption menuOption = new FloatMenuOption(text, action, MenuOptionPriority.AttackEnemy, null, null, 0f, null, null);
+                opts.Add(menuOption);
+            }
+        }
+
+        public static void CorpseStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
+        {
+            Corpse target = t as Corpse;
+            if (target != null)
+            {
+
+                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
+                {
+                    return;
+                }
+                JobDef killTarget = DefDatabase<JobDef>.GetNamed("StakeCorpse");
+                Action action = () =>
+                {
+                    Job job = new Job(killTarget, target);
+                    job.count = 1;
+                    pawn.jobs.TryTakeOrderedJob(job);
+                };
+                string text = "Stake corpse";
+                FloatMenuOption menuOption = new FloatMenuOption(text, action, MenuOptionPriority.AttackEnemy, null, null, 0f, null, null);
+                opts.Add(menuOption);
             }
         }
     }

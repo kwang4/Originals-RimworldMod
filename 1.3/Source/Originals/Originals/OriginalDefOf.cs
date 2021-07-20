@@ -18,5 +18,7 @@ public static class OriginalDefOf
         public static HediffDef Original;
         public static HediffDef O_ResStatus;
         public static HediffDef O_RegenBodyPart;
+        public static HediffDef O_Staked;
+        public static HediffDef HeartAttack;
     }
 }
