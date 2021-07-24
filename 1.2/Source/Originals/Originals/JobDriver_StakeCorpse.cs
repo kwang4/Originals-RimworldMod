@@ -9,13 +9,13 @@ using Verse.AI;
 
 namespace Originals
 {
-    class JobDriver_StakePawn : JobDriver
+    class JobDriver_StakeCorpse : JobDriver
     {
-        protected Pawn Victim
+        protected Corpse Victim
         {
             get
             {
-                return (Pawn)this.job.targetA.Thing;
+                return (Corpse)this.job.targetA.Thing;
             }
         }
         public override bool TryMakePreToilReservations(bool errorOnFailed)
@@ -25,8 +25,8 @@ namespace Originals
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.FailOnDespawnedNullOrForbidden<JobDriver_StakePawn>(TargetIndex.A);
-            this.FailOnAggroMentalState<JobDriver_StakePawn>(TargetIndex.A);
+            this.FailOnDespawnedNullOrForbidden<JobDriver_StakeCorpse>(TargetIndex.A);
+            this.FailOnAggroMentalState<JobDriver_StakeCorpse>(TargetIndex.A);
             Toil toil1 = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.OnCell);
             yield return toil1;
             Toil toil2 = Toils_General.Wait(240, TargetIndex.None).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch).WithProgressBarToilDelay(TargetIndex.A, false, -0.5f).PlaySustainerOrSound(SoundDefOf.Interact_Tend);
@@ -37,7 +37,7 @@ namespace Originals
                 initAction = () =>
                 {
                     BodyPartRecord bodyPart = null;
-                    foreach (BodyPartRecord part in Victim.health.hediffSet.GetNotMissingParts())
+                    foreach (BodyPartRecord part in Victim.InnerPawn.health.hediffSet.GetNotMissingParts())
                     {
                         foreach (BodyPartTagDef tag in part.def.tags)
                         {
@@ -56,8 +56,8 @@ namespace Originals
                     }
                     if (bodyPart != null)
                     {
-                        Hediff oHediff = Victim.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
-                        if(oHediff != null) //Victim is an Original
+                        Hediff oHediff = Victim.InnerPawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
+                        if (oHediff != null) //Victim is an Original
                         {
                             float severity = 1f;
                             switch (oHediff.Severity)
@@ -78,33 +78,25 @@ namespace Originals
                                     severity = OriginalSettings.originalStakeMult; // Highblood
                                     break;
                             }
-                            Hediff stakedHediff = HediffMaker.MakeHediff(OriginalDefOf.O_Staked, Victim, OriginalDefLoader.GetNotMissingPart(Victim, BodyPartDefOf.Heart));
+                            Hediff stakedHediff = HediffMaker.MakeHediff(OriginalDefOf.O_Staked, Victim.InnerPawn, OriginalDefLoader.GetNotMissingPart(Victim.InnerPawn, BodyPartDefOf.Heart));
                             stakedHediff.Severity = severity;
-                            Victim.health.AddHediff(stakedHediff);
-                            Messages.Message("An Original has been staked!", MessageTypeDefOf.NeutralEvent, false);
+                            Victim.InnerPawn.health.AddHediff(stakedHediff);
                         }
                         else //Kill a normal pawn
                         {
                             DamageDef damageDef = DefDatabase<DamageDef>.GetNamed("Stab");
                             DamageInfo damage = new DamageInfo(damageDef, 1000, 999, -1f, pawn, bodyPart, null, DamageInfo.SourceCategory.ThingOrUnknown, null);
 
-                            Hediff_Injury hediff = (Hediff_Injury)HediffMaker.MakeHediff(HediffDefOf.Stab, Victim, bodyPart);
+                            Hediff_Injury hediff = (Hediff_Injury)HediffMaker.MakeHediff(HediffDefOf.Stab, Victim.InnerPawn, bodyPart);
                             hediff.Severity = 1000f;
-                            Victim.health.AddHediff(hediff);
-                            TaleUtility.Notify_PawnDied(Victim, damage);
-                            if (Victim.Faction != Faction.OfPlayer && !Victim.Faction.HostileTo(Faction.OfPlayer))
-                            {
-                                FactionRelation f = Faction.OfPlayer.RelationWith(Victim.Faction);
-                                string reason = "GoodwillChangedReason_PawnDied".Translate(Victim.LabelShort, Victim);
-                                Faction.OfPlayer.TryAffectGoodwillWith(Victim.Faction, -5, true, true, HistoryEventDefOf.MemberKilled, null);
-                            }
+                            Victim.InnerPawn.health.AddHediff(hediff);
                         }
 
                     }
                 },
-                defaultCompleteMode = ToilCompleteMode.Instant 
+                defaultCompleteMode = ToilCompleteMode.Instant
             };
-            
+
 
 
             yield break;

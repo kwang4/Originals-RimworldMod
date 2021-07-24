@@ -81,7 +81,6 @@ namespace Originals
                             Hediff stakedHediff = HediffMaker.MakeHediff(OriginalDefOf.O_Staked, Victim, OriginalDefLoader.GetNotMissingPart(Victim, BodyPartDefOf.Heart));
                             stakedHediff.Severity = severity;
                             Victim.health.AddHediff(stakedHediff);
-                            Messages.Message("An Original has been staked!", MessageTypeDefOf.NeutralEvent, false);
                         }
                         else //Kill a normal pawn
                         {
@@ -96,7 +95,7 @@ namespace Originals
                             {
                                 FactionRelation f = Faction.OfPlayer.RelationWith(Victim.Faction);
                                 string reason = "GoodwillChangedReason_PawnDied".Translate(Victim.LabelShort, Victim);
-                                Faction.OfPlayer.TryAffectGoodwillWith(Victim.Faction, -5, true, true, HistoryEventDefOf.MemberKilled, null);
+                                Faction.OfPlayer.TryAffectGoodwillWith(Victim.Faction, -5, true, true, "GoodwillChangedReason_PawnDied".Translate(Victim.LabelShort, Victim), null);
                             }
                         }
 

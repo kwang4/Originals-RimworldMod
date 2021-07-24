@@ -105,8 +105,7 @@ namespace Originals
             Pawn target = t as Pawn;
             if (target != null)
             {
-
-                if (!target.Downed && target.Awake() || (!t.def.race.Humanlike))
+                if (!target.Downed && target.Awake())
                     return;
 
                 if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
@@ -132,7 +131,7 @@ namespace Originals
             if (target != null)
             {
 
-                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true) || (target.InnerPawn != null && !target.InnerPawn.def.race.Humanlike))
+                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
                 {
                     return;
                 }
