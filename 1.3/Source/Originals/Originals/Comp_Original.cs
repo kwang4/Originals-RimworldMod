@@ -129,7 +129,7 @@ namespace Originals
                 map.weatherManager.eventHandler.AddEvent(new WeatherEvent_OriginalLightning(map, closest.Position, 0, true));
                 map.weatherManager.eventHandler.AddEvent(new WeatherEvent_OriginalLightning(map, closest.Position, 0, true));
                 GenExplosion.DoExplosion(pawn.PositionHeld, map, distance + 10f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false, null, null);
-                Messages.Message("An Original has died and transferred their power", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message("An Original has died and transferred their power",closest, MessageTypeDefOf.NeutralEvent, false);
             }
             else
             {
@@ -457,7 +457,7 @@ namespace Originals
                 pawnCaravan.AddPawn(pawn, false);
             else
                 GenExplosion.DoExplosion(pawn.Position, pawn.Map, 9f, DamageDefOf.Smoke, pawn);
-            Messages.Message(pawn.Name + " has resurrected!", MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(pawn.Name + " has resurrected!",pawn, MessageTypeDefOf.PositiveEvent, false);
 
 
 
