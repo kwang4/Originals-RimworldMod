@@ -27,34 +27,35 @@ namespace Originals
         {
             this.FailOnDespawnedNullOrForbidden<JobDriver_StakeCorpse>(TargetIndex.A);
             this.FailOnAggroMentalState<JobDriver_StakeCorpse>(TargetIndex.A);
-            Toil toil1 = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.OnCell);
-            yield return toil1;
-            Toil toil2 = Toils_General.Wait(240, TargetIndex.None).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch).WithProgressBarToilDelay(TargetIndex.A, false, -0.5f).PlaySustainerOrSound(SoundDefOf.Interact_Tend);
-            yield return toil2;
 
-            yield return new Toil
+            BodyPartRecord bodyPart = null;
+            foreach (BodyPartRecord part in Victim.InnerPawn.health.hediffSet.GetNotMissingParts())
             {
-                initAction = () =>
+                foreach (BodyPartTagDef tag in part.def.tags)
                 {
-                    BodyPartRecord bodyPart = null;
-                    foreach (BodyPartRecord part in Victim.InnerPawn.health.hediffSet.GetNotMissingParts())
+                    if (tag.vital && tag.defName == "BloodPumpingSource")
                     {
-                        foreach (BodyPartTagDef tag in part.def.tags)
-                        {
-                            if (tag.vital && tag.defName == "BloodPumpingSource")
-                            {
-                                bodyPart = part;
-                                break;
-                            }
-                        }
-                        if (bodyPart != null)
-                            break;
+                        bodyPart = part;
+                        break;
                     }
-                    while (!bodyPart.parent.IsCorePart)
-                    {
-                        bodyPart = bodyPart.parent;
-                    }
-                    if (bodyPart != null)
+                }
+                if (bodyPart != null)
+                    break;
+            }
+            while (bodyPart != null && !bodyPart.parent.IsCorePart)
+            {
+                bodyPart = bodyPart.parent;
+            } //Body part check
+            if (bodyPart != null)
+            {
+                Toil toil1 = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.OnCell);
+                yield return toil1;
+                Toil toil2 = Toils_General.Wait(240, TargetIndex.None).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch).WithProgressBarToilDelay(TargetIndex.A, false, -0.5f).PlaySustainerOrSound(SoundDefOf.Interact_Tend);
+                yield return toil2;
+
+                yield return new Toil
+                {
+                    initAction = () =>
                     {
                         Hediff oHediff = Victim.InnerPawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
                         if (oHediff != null) //Victim is an Original
@@ -92,17 +93,22 @@ namespace Originals
                             Victim.InnerPawn.health.AddHediff(hediff);
                         }
 
-                    }
-                },
-                defaultCompleteMode = ToilCompleteMode.Instant
-            };
+
+                    },
+                    defaultCompleteMode = ToilCompleteMode.Instant
+                };
+            }
+            else
+            {
+                Messages.Message("Corpse's heart is already destroyed.", Victim, MessageTypeDefOf.NeutralEvent, false);
+            }
+
+
 
 
 
             yield break;
         }
-
-
 
     }
 }

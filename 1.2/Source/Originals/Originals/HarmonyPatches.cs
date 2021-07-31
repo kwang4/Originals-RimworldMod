@@ -103,7 +103,7 @@ namespace Originals
         public static void LivingPawnStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
         {
             Pawn target = t as Pawn;
-            if (target != null)
+            if (target != null && target.TryGetComp<Comp_Original>() != null)
             {
                 if (!target.Downed && target.Awake())
                     return;
@@ -128,7 +128,7 @@ namespace Originals
         public static void CorpseStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
         {
             Corpse target = t as Corpse;
-            if (target != null)
+            if (target != null && target.InnerPawn.TryGetComp<Comp_Original>() != null)
             {
 
                 if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))

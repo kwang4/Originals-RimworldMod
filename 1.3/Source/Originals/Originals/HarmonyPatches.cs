@@ -44,12 +44,12 @@ namespace Originals
         [HarmonyPrefix]
         public static bool Prefix(Corpse __instance)
         {
-            if(__instance.InnerPawn != null)
+            if (__instance.InnerPawn != null)
             {
                 Comp_Original oComp = __instance.InnerPawn.GetComp<Comp_Original>();
-                if(oComp != null && __instance.InnerPawn.health.hediffSet.HasHediff(OriginalDefOf.Original))
+                if (oComp != null && __instance.InnerPawn.health.hediffSet.HasHediff(OriginalDefOf.Original))
                 {
-                   oComp.TransferOriginalPower(__instance.InnerPawn);
+                    oComp.TransferOriginalPower(__instance.InnerPawn);
                 }
             }
 
@@ -69,41 +69,38 @@ namespace Originals
             IntVec3 c = IntVec3.FromVector3(clickPos);
             foreach (Thing t in c.GetThingList(pawn.Map))
             {
-                if (t.def?.race?.Humanlike ?? false)
-                {
-                    LivingPawnStake(pawn, t, opts);
-                    CorpseStake(pawn, t, opts);
-                }
+                LivingPawnStake(pawn, t, opts);
+                CorpseStake(pawn, t, opts);
 
             }
-/*            foreach (LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackAny(), true, null))
-            {
-                Pawn target = (Pawn)targetInfo.Thing;
-                if (!target.Downed && target.Awake())
-                    continue;
-                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
-                {
-                    continue;
-                }
-                JobDef killTarget = DefDatabase<JobDef>.GetNamed("StakePawn");
-                Action action = () =>
-                {
-                    Job job = new Job(killTarget, target);
-                    job.count = 1;
-                    pawn.jobs.TryTakeOrderedJob(job);
-                };
-                string text = "Stake pawn";
-                FloatMenuOption menuOption = new FloatMenuOption(text, action, MenuOptionPriority.AttackEnemy, null, null, 0f, null, null);
-                opts.Add(menuOption);
+            /*            foreach (LocalTargetInfo targetInfo in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackAny(), true, null))
+                        {
+                            Pawn target = (Pawn)targetInfo.Thing;
+                            if (!target.Downed && target.Awake())
+                                continue;
+                            if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
+                            {
+                                continue;
+                            }
+                            JobDef killTarget = DefDatabase<JobDef>.GetNamed("StakePawn");
+                            Action action = () =>
+                            {
+                                Job job = new Job(killTarget, target);
+                                job.count = 1;
+                                pawn.jobs.TryTakeOrderedJob(job);
+                            };
+                            string text = "Stake pawn";
+                            FloatMenuOption menuOption = new FloatMenuOption(text, action, MenuOptionPriority.AttackEnemy, null, null, 0f, null, null);
+                            opts.Add(menuOption);
 
 
-            }*/
+                        }*/
         }
 
         public static void LivingPawnStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
         {
             Pawn target = t as Pawn;
-            if (target != null)
+            if (target != null && target.TryGetComp<Comp_Original>() != null)
             {
 
                 if (!target.Downed && target.Awake() || (!t.def.race.Humanlike))
@@ -129,10 +126,10 @@ namespace Originals
         public static void CorpseStake(Pawn pawn, Thing t, List<FloatMenuOption> opts)
         {
             Corpse target = t as Corpse;
-            if (target != null)
+            if (target != null && target.InnerPawn.TryGetComp<Comp_Original>() != null)
             {
 
-                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true) || (target.InnerPawn != null && !target.InnerPawn.def.race.Humanlike))
+                if (!pawn.CanReserveAndReach(target, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, true))
                 {
                     return;
                 }
