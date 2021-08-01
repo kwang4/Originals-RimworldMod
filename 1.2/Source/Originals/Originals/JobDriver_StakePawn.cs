@@ -91,7 +91,7 @@ namespace Originals
                             hediff.Severity = 1000f;
                             Victim.health.AddHediff(hediff);
                             TaleUtility.Notify_PawnDied(Victim, damage);
-                            if (Victim.Faction != Faction.OfPlayer && !Victim.Faction.HostileTo(Faction.OfPlayer))
+                            if (Victim.Faction != null && Victim.Faction.Name.ToLower() != "space refugee" && Victim.Faction != Faction.OfPlayer && !Victim.Faction.HostileTo(Faction.OfPlayer))
                             {
                                 FactionRelation f = Faction.OfPlayer.RelationWith(Victim.Faction);
                                 string reason = "GoodwillChangedReason_PawnDied".Translate(Victim.LabelShort, Victim);
