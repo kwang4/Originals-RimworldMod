@@ -267,7 +267,7 @@ namespace Originals
                 return;
             }
 
-            foreach(Hediff hediffToHeal in hediffs)
+            foreach (Hediff hediffToHeal in hediffs.ToList())
             {
                 if (hediffToHeal != null)
                 {
@@ -359,6 +359,7 @@ namespace Originals
                 if (hediff.GetType() == typeof(Hediff_MissingPart))
                 {
                     Hediff_MissingPart partDiff = hediff as Hediff_MissingPart;
+                    BodyPartRecord partParent = partDiff.Part;
                     while (partParent.parent != null)
                     {
                         //Log.Message(partDiff.Part + ", Needed: " + NeedPart(partDiff.Part));

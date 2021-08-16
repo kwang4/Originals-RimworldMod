@@ -267,7 +267,7 @@ namespace Originals
                 return;
             }
 
-            foreach(Hediff hediffToHeal in hediffs)
+            foreach(Hediff hediffToHeal in hediffs.ToList())
             {
                 if (hediffToHeal != null)
                 {
@@ -280,7 +280,12 @@ namespace Originals
 
         public void TryHealScars(Pawn pawn)
         {
+
             IEnumerable<Hediff> hediffs = from hd in pawn.health.hediffSet.hediffs where hd.IsPermanent() && hd.def.isBad select hd;
+            if(!OriginalSettings.overrideScarification && pawn.Ideo.RequiredScars > 0)
+            {
+                hediffs = from hd in pawn.health.hediffSet.hediffs where hd.IsPermanent() && hd.def.isBad && hd.def != HediffDefOf.Scarification select hd;
+            }
             if (hediffs.Count() == 0)
                 return;
             Hediff hediffToHeal = hediffs.RandomElement<Hediff>();
@@ -467,7 +472,6 @@ namespace Originals
             else
                 GenExplosion.DoExplosion(pawn.Position, pawn.Map, 9f, DamageDefOf.Smoke, pawn);
             Messages.Message(pawn.Name + " has resurrected!",pawn, MessageTypeDefOf.PositiveEvent, false);
-
 
 
         }
