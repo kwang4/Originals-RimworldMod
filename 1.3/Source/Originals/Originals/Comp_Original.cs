@@ -358,15 +358,24 @@ namespace Originals
             {
                 if (hediff.GetType() == typeof(Hediff_MissingPart))
                 {
+                    
                     Hediff_MissingPart partDiff = hediff as Hediff_MissingPart;
-                    if (partDiff.Part != null && NeedPart(partDiff.Part))
+                    
+                    BodyPartRecord partParent = partDiff.Part;
+                    while(partParent.parent != null)
                     {
-                        pawn.health.RestorePart(partDiff.Part, null, true);
+                        //Log.Message(partDiff.Part + ", Needed: " + NeedPart(partDiff.Part));
+                        if (partParent != null && NeedPart(partParent))
+                        {
+                            pawn.health.RestorePart(partParent, null, true);
+                        }
+                        else
+                        {
+                            regrowHediffParts.Add(partParent);
+                        }
+                        partParent = partParent.parent;
                     }
-                    else
-                    {
-                        regrowHediffParts.Add(partDiff.Part);
-                    }
+
                 }
             }
             Pawn_HealthTracker health = pawn.health;
@@ -417,7 +426,7 @@ namespace Originals
                 
                 if (hediff.def == OriginalDefOf.O_Staked || hediff.def == OriginalDefOf.HeartAttack)
                 {
-                    Log.Message("Staked hediff: " + hediff.def.label);
+                   // Log.Message("Staked hediff: " + hediff.def.label);
                     pawn.health.RemoveHediff(hediff);
                     hediff.Severity = 0f;
                 }
