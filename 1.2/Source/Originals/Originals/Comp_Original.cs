@@ -356,6 +356,10 @@ namespace Originals
             List<BodyPartRecord> regrowHediffParts = new List<BodyPartRecord>();
             foreach (Hediff hediff in pawn.health.hediffSet.hediffs.ToList())
             {
+                if (hediff.def == HediffDefOf.BloodLoss)
+                {
+                    pawn.health.RemoveHediff(hediff);
+                }
                 if (hediff.GetType() == typeof(Hediff_MissingPart))
                 {
                     Hediff_MissingPart partDiff = hediff as Hediff_MissingPart;

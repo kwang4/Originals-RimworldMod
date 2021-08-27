@@ -60,28 +60,38 @@ namespace Originals
                         Hediff oHediff = Victim.InnerPawn.health.hediffSet.GetFirstHediffOfDef(OriginalDefOf.Original, false);
                         if (oHediff != null) //Victim is an Original
                         {
-                            float severity = 1f;
-                            switch (oHediff.Severity)
+                            if(OriginalSettings.stakingOriginalBodyKills)
                             {
-                                case float n when n < .5f:
-                                    severity = OriginalSettings.mortalStakeMult; // Mortal
-                                    break;
-                                case float n when n < 1f:
-                                    severity = OriginalSettings.lowStakeMult; // Lowblood
-                                    break;
-                                case float n when n < 1.5f:
-                                    severity = OriginalSettings.fullStakeMult; // Fullblood
-                                    break;
-                                case float n when n < 2.5f:
-                                    severity = OriginalSettings.highStakeMult; // Highblood
-                                    break;
-                                case float n when n >= 2.5f:
-                                    severity = OriginalSettings.originalStakeMult; // Highblood
-                                    break;
+                                Hediff destroyHeart = HediffMaker.MakeHediff(HediffDefOf.Stab, Victim.InnerPawn, OriginalDefLoader.GetNotMissingPart(Victim.InnerPawn, BodyPartDefOf.Heart));
+                                destroyHeart.Severity = 999f;
+                                Victim.InnerPawn.health.AddHediff(destroyHeart);
                             }
-                            Hediff stakedHediff = HediffMaker.MakeHediff(OriginalDefOf.O_Staked, Victim.InnerPawn, OriginalDefLoader.GetNotMissingPart(Victim.InnerPawn, BodyPartDefOf.Heart));
-                            stakedHediff.Severity = severity;
-                            Victim.InnerPawn.health.AddHediff(stakedHediff);
+                            else
+                            {
+                                float severity = 1f;
+                                switch (oHediff.Severity)
+                                {
+                                    case float n when n < .5f:
+                                        severity = OriginalSettings.mortalStakeMult; // Mortal
+                                        break;
+                                    case float n when n < 1f:
+                                        severity = OriginalSettings.lowStakeMult; // Lowblood
+                                        break;
+                                    case float n when n < 1.5f:
+                                        severity = OriginalSettings.fullStakeMult; // Fullblood
+                                        break;
+                                    case float n when n < 2.5f:
+                                        severity = OriginalSettings.highStakeMult; // Highblood
+                                        break;
+                                    case float n when n >= 2.5f:
+                                        severity = OriginalSettings.originalStakeMult; // Highblood
+                                        break;
+                                }
+                                Hediff stakedHediff = HediffMaker.MakeHediff(OriginalDefOf.O_Staked, Victim.InnerPawn, OriginalDefLoader.GetNotMissingPart(Victim.InnerPawn, BodyPartDefOf.Heart));
+                                stakedHediff.Severity = severity;
+                                Victim.InnerPawn.health.AddHediff(stakedHediff);
+                            }
+
                         }
                         else //Kill a normal pawn
                         {

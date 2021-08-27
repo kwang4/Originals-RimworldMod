@@ -32,6 +32,7 @@ namespace Originals
             listingStandard.CheckboxLabeled("Resurrection sickness", ref OriginalSettings.resSickness, "Should a resurrected pawn have resurrection sickness after coming back");
             listingStandard.CheckboxLabeled("Heal Scars", ref OriginalSettings.healScars, "Should Originals heal scars (brain damage, gunshot scars, etc)");
             listingStandard.CheckboxLabeled("Healing Overrides Scarification", ref OriginalSettings.overrideScarification, "Should scarification scars heal, even if a pawn's ideology wants it");
+            listingStandard.CheckboxLabeled("Staking Original corpse Kills", ref OriginalSettings.stakingOriginalBodyKills, "Should staking a dead original's body kill them.");
             listingStandard.Label("Body Part Regen Time: " + OriginalSettings.originalRegenPartTime, -1, "Ticks to fully regenerate a body part.");
             listingStandard.Label("Default: 60000 ticks (1 Day)");
             OriginalSettings.originalRegenPartTime = (int)listingStandard.Slider(OriginalSettings.originalRegenPartTime, 0, 60000);

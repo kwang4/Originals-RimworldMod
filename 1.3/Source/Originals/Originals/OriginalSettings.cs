@@ -16,6 +16,7 @@ namespace Originals
         public static bool resSickness = false;
         public static bool healScars = true;
         public static bool overrideScarification = false;
+        public static bool stakingOriginalBodyKills = false;
         public static float lowbloodMult = 1.3f;
         public static float fullbloodMult = .82f;
         public static float highbloodMult = 0.65f;
@@ -36,6 +37,7 @@ namespace Originals
             Scribe_Values.Look(ref resSickness, "O_resSickness", false);
             Scribe_Values.Look(ref healScars, "O_healScars", true);
             Scribe_Values.Look(ref overrideScarification, "O_overrideScarification", false);
+            Scribe_Values.Look(ref stakingOriginalBodyKills, "O_stakingOriginalBodyKills", false);
             Scribe_Values.Look(ref lowbloodMult, "O_lowbloodMult", 1.3f);
             Scribe_Values.Look(ref fullbloodMult, "O_fullbloodMult", 0.85f);
             Scribe_Values.Look(ref highbloodMult, "O_highbloodMult", 0.65f);

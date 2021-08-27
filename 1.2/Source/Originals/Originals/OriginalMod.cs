@@ -31,6 +31,7 @@ namespace Originals
             listingStandard.CheckboxLabeled("Immortal needs heart", ref OriginalSettings.needHeart, "If checked, when the heart is destroyed, an immortal dies for good");
             listingStandard.CheckboxLabeled("Resurrection sickness", ref OriginalSettings.resSickness, "Should a resurrected pawn have resurrection sickness after coming back");
             listingStandard.CheckboxLabeled("Heal Scars", ref OriginalSettings.healScars, "Should Originals heal scars (brain damage, gunshot scars, etc)");
+            listingStandard.CheckboxLabeled("Staking Original corpse Kills", ref OriginalSettings.stakingOriginalBodyKills, "Should staking a dead original's body kill them.");
             listingStandard.Label("Body Part Regen Time: " + OriginalSettings.originalRegenPartTime, -1, "Ticks to fully regenerate a body part.");
             listingStandard.Label("Default: 60000 ticks (1 Day)");
             OriginalSettings.originalRegenPartTime = (int)listingStandard.Slider(OriginalSettings.originalRegenPartTime, 0, 60000);
