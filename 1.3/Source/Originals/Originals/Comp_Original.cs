@@ -361,7 +361,7 @@ namespace Originals
             List<BodyPartRecord> regrowHediffParts = new List<BodyPartRecord>();
             foreach (Hediff hediff in pawn.health.hediffSet.hediffs.ToList())
             {
-                if(hediff.def == HediffDefOf.BloodLoss)
+                if(hediff.def == HediffDefOf.BloodLoss || hediff.def == HediffDefOf.WoundInfection || hediff.def == HediffDefOf.Heatstroke || hediff.def == HediffDefOf.Hypothermia || hediff.def == HediffDefOf.Malnutrition)
                 {
                     pawn.health.RemoveHediff(hediff);
                 }
