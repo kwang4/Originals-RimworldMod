@@ -433,7 +433,7 @@ namespace Originals
             foreach (Hediff hediff in hediffSet.hediffs.ToList())
             {
                 
-                if (hediff.def == OriginalDefOf.O_Staked || hediff.def == OriginalDefOf.HeartAttack)
+                if (hediff.def == OriginalDefOf.O_Staked || hediff.def == OriginalDefOf.HeartAttack || hediff.def.makesSickThought)
                 {
                    // Log.Message("Staked hediff: " + hediff.def.label);
                     pawn.health.RemoveHediff(hediff);
